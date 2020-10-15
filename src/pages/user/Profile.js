@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
-  Image,
   TextInput,
   TouchableOpacity,
   Text,
   KeyboardAvoidingView,
   AsyncStorage,
-  Alert,
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import { TextInputMask } from 'react-native-masked-text'
@@ -25,22 +23,36 @@ export default function Profile({ navigation }) {
   const [edit, setEdit] = useState(false)
   const [show, setShow] = useState(false)
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#fff', alignItems: 'center' }}>
-      <Header />
-      <Avatar />
+  useEffect(() => {
+    handleLoadUser()
+  }, [])
 
-      <TouchableOpacity
-        onPress={() => {
-          setEdit(true)
-          setShow(true)
-        }}
-        style={styles.icon}
-      >
-        <AntDesign name="edit" size={25} color="black" />
-        <Text>Editar</Text>
-      </TouchableOpacity>
+  async function handleLoadUser() {
+    const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
+    setName(user[0].name)
+    setCpf(user[0].cpf)
+    setEmail(user[0].email)
+    setPassword(user[0].password)
+  }
+
+  return (
+    <View style={styles.container}>
+      <Header />
       <KeyboardAvoidingView behavior="padding" style={styles.divForm}>
+        <View style={styles.divHeaderForm}>
+          <Avatar />
+
+          <TouchableOpacity
+            onPress={() => {
+              setEdit(true)
+              setShow(true)
+            }}
+            style={styles.icon}
+          >
+            <AntDesign name="edit" size={25} color="black" />
+            <Text>Editar</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.divInfo}>
           <Text>Nome: </Text>
           <TextInput
@@ -79,7 +91,7 @@ export default function Profile({ navigation }) {
           <View style={styles.divInfo}>
             <Text>Senha: </Text>
             <TextInput
-              secureTextEntry="true"
+              secureTextEntry={true}
               style={styles.input}
               value={password}
               onChangeText={(value) => setPassword(value)}
@@ -109,20 +121,29 @@ export default function Profile({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
   icon: {
     zIndex: 1,
     alignItems: 'center',
     position: 'absolute',
     right: 1,
-    top: 90,
-    marginRight: 15,
+    top: 10,
+    marginRight: 5,
   },
   divForm: {
     maxWidth: '90%',
-    marginTop: 15,
     flex: 1,
-    maxHeight: 410,
-    justifyContent: 'center',
+    maxHeight: 500,
+  },
+  divHeaderForm: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    maxHeight: 180,
   },
   divInfo: {
     marginVertical: 7.5,
@@ -130,7 +151,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  textInfo: {},
   input: {
     backgroundColor: '#dddd',
     width: '85%',
