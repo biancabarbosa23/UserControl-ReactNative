@@ -1,22 +1,13 @@
-import { StatusBar } from 'expo-status-bar'
+import { StatusBar } from 'react-native'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
 
-import Login from './src/pages/authenticate/Login'
+import Routes from './src/routes'
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Login />
-    </View>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#151515" />
+      <Routes />
+    </>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})

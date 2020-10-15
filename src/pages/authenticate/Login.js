@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -7,14 +7,62 @@ import {
   TouchableOpacity,
   Text,
   Image,
+  AsyncStorage,
+  Alert,
 } from 'react-native'
 
-export default function Login() {
-  const [usuario, setUsuario] = useState()
-  const [password, setPassword] = useState()
+import api from '../../services/api'
+
+export default function Login({ navigation }) {
+  const [usuario, setUsuario] = useState(null)
+  const [password, setPassword] = useState(null)
+
+  useEffect(() => {
+    checkToken()
+  }, [])
+
+  async function checkToken() {
+    const token = await AsyncStorage.getItem('@CodeApi:token')
+    if (!token) return
+
+    handleNavigation()
+  }
+
+  async function signIn() {
+    try {
+      const response = await api.post('/login', {
+        usuario,
+        password,
+      })
+
+      const { user, token } = response.data
+
+      await AsyncStorage.multiSet([
+        ['@CodeApi:token', token],
+        ['@CodeApi:user', JSON.stringify(user)],
+      ])
+
+      setUsuario(null)
+      setPassword(null)
+
+      handleNavigation()
+    } catch (response) {
+      Alert.alert(response.data.message)
+    }
+  }
+
+  async function handleNavigation() {
+    const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
+
+    if (user[0].nivel === 1) navigation.navigate('DashboardUser')
+
+    if (user[0].nivel === 999) navigation.navigate('DashboardAdm')
+
+    return
+  }
 
   return (
-    <KeyboardAvoidingView behavior="padding">
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.form}>
         <View style={styles.divLogo}>
           <Image
@@ -27,19 +75,23 @@ export default function Login() {
         <TextInput
           placeholder="Insira seu E-mail ou CPF"
           style={styles.input}
+          value={usuario}
           onChangeText={(value) => setUsuario(value)}
         />
         <TextInput
           placeholder="Senha"
           style={styles.input}
-          secureTextEntry="true"
+          secureTextEntry={true}
+          value={password}
           onChangeText={(value) => setPassword(value)}
         />
-
-        <TouchableOpacity style={styles.btnEntrar}>
+        <TouchableOpacity style={styles.btnEntrar} onPress={signIn}>
           <Text style={styles.btnTextEntrar}>Entrar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnCadastro} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.btnCadastro}
+          onPress={() => navigation.navigate('Register')}
+        >
           <Text style={styles.btnTextCadastro}>Criar uma conta</Text>
         </TouchableOpacity>
       </View>
@@ -48,12 +100,16 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   divLogo: {
     minWidth: '100%',
     alignItems: 'center',
-    minHeight: 150,
+    minHeight: 100,
     justifyContent: 'center',
     padding: 6,
+    marginBottom: 15,
   },
   form: {
     flex: 1,
