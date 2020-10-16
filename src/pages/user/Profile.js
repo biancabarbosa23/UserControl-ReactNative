@@ -12,6 +12,9 @@ import {
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import { TextInputMask } from 'react-native-masked-text'
+import Constants from 'expo-constants'
+import * as Permissions from 'expo-permissions'
+import * as ImagePicker from 'expo-image-picker'
 
 import Header from '../../components/Header'
 
@@ -25,6 +28,7 @@ export default function Profile({ navigation }) {
   const [password, setPassword] = useState(null)
   const [cpfField, setCpfField] = useState(false)
   const [nivel, setNivel] = useState(null)
+  const [avatar, setAvatar] = useState({})
   const [edit, setEdit] = useState(false)
   const [show, setShow] = useState(false)
 
@@ -49,6 +53,17 @@ export default function Profile({ navigation }) {
     try {
       if (!cpfField.isValid()) return Alert.alert('CPF invalido!')
 
+      const data = new FormData()
+
+      const path = avatar.uri.split('/')
+      const name = path[path.length - 1]
+
+      data.append('avatar', {
+        name,
+        uri: avatar.uri,
+        type: avatar.type,
+      })
+
       let response
 
       if (password === null) {
@@ -56,12 +71,14 @@ export default function Profile({ navigation }) {
           name,
           cpf: cpfField.getRawValue(),
           email,
+          image: data,
         })
       } else {
         response = await api.put(`/user/${idUser}`, {
           name,
           cpf: cpfField.getRawValue(),
           email,
+          image: data,
           password,
         })
       }
@@ -83,7 +100,26 @@ export default function Profile({ navigation }) {
     else navigation.navigate('DashboardAdm')
   }
 
-  async function handleUpdatePhoto() {}
+  async function handlePickerCall() {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+
+      if (status !== 'granted') {
+        Alert.alert('Precisamos da sua permissão para alterar sua foto')
+        return
+      }
+    }
+
+    const data = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    })
+
+    if (data.cancelled) return
+
+    if (!data.uri) return
+
+    setAvatar(data)
+  }
 
   return (
     <View style={styles.container}>
@@ -93,13 +129,17 @@ export default function Profile({ navigation }) {
           <TouchableOpacity
             style={styles.header}
             onPress={() => {
-              edit === true ? handleUpdatePhoto() : {}
+              edit === true ? handlePickerCall() : {}
             }}
           >
-            <Image
-              style={styles.imageUser}
-              source={require('../../../assets/ImageUserExample.png')}
-            />
+            {avatar.uri ? (
+              <Image style={styles.imageUser} source={{ uri: avatar.uri }} />
+            ) : (
+              <Image
+                style={styles.imageUser}
+                source={require('../../../assets/ImageUserExample.png')}
+              />
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity
