@@ -5,8 +5,10 @@ import { createStackNavigator } from 'react-navigation-stack'
 import Login from './pages/authenticate/Login'
 import Register from './pages/authenticate/Register'
 import DashboardUser from './pages/user/Dashboard'
+import ProfileMe from './pages/user/Profile'
 import DashboardAdm from './pages/admin/Dashboard'
-import ProfileUser from './pages/user/Profile'
+import UserList from './pages/admin/UserList'
+import ProfileUser from './pages/admin/ProfileUser'
 
 const Routes = createAppContainer(
   createStackNavigator(
@@ -29,8 +31,8 @@ const Routes = createAppContainer(
           title: 'Home',
         },
       },
-      ProfileUser: {
-        screen: ProfileUser,
+      ProfileMe: {
+        screen: ProfileMe,
         navigationOptions: {
           title: 'Profile',
         },
@@ -38,7 +40,19 @@ const Routes = createAppContainer(
       DashboardAdm: {
         screen: DashboardAdm,
         navigationOptions: {
-          title: 'Home',
+          title: 'Dashboard',
+        },
+      },
+      UserList: {
+        screen: UserList,
+        navigationOptions: {
+          title: 'List',
+        },
+      },
+      ProfileUser: {
+        screen: ProfileUser,
+        navigationOptions: {
+          title: 'Profile',
         },
       },
     },

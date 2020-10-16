@@ -4,7 +4,6 @@ import {
   Text,
   AsyncStorage,
   TouchableOpacity,
-  Image,
   StyleSheet,
   KeyboardAvoidingView,
 } from 'react-native'
@@ -17,7 +16,7 @@ export default function Dashboard({ navigation }) {
 
   useEffect(() => {
     checkToken()
-  }, [])
+  })
 
   async function checkToken() {
     const token = await AsyncStorage.getItem('@CodeApi:token')
@@ -36,13 +35,10 @@ export default function Dashboard({ navigation }) {
     <KeyboardAvoidingView style={styles.container}>
       <Header />
       <Avatar />
-      <View style={styles.divName}>
-        <Text style={styles.name}>{loggedUser.name}</Text>
-      </View>
       <View style={styles.divButton}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('ProfileUser')}
+          onPress={() => navigation.navigate('ProfileMe')}
         >
           <Text style={styles.btnText}>Ver Perfil</Text>
         </TouchableOpacity>
@@ -59,18 +55,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  divName: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  name: {
-    marginTop: 10,
-    fontSize: 18,
-  },
   divButton: {
+    flex: 1,
     alignItems: 'center',
-    paddingTop: 80,
-    minHeight: 400,
+    justifyContent: 'center',
   },
   btnSair: {
     marginTop: 30,

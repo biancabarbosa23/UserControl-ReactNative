@@ -16,7 +16,7 @@ export default function Header() {
 const styles = StyleSheet.create({
   divLogo: {
     paddingTop: 15,
-    backgroundColor: '#191919',
+    backgroundColor: '#151515',
     alignItems: 'center',
     minWidth: '100%',
   },

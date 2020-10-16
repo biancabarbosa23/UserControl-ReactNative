@@ -1,13 +1,41 @@
-import React, { useState } from 'react'
-import { StyleSheet, View, Image, Animated } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  Alert,
+  AsyncStorage,
+} from 'react-native'
 
 export default function Header() {
+  const [loggedUser, setLoggedUser] = useState([])
+
+  useEffect(() => {
+    handleDataUser()
+  }, [])
+
+  async function handleDataUser() {
+    try {
+      const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
+      setLoggedUser(user[0])
+    } catch (response) {
+      Alert.alert(response.data.message)
+    }
+  }
+
   return (
     <View style={styles.header}>
       <Image
         style={styles.imageUser}
-        source={require('../../../assets/ImageUserExample.jpg')}
+        source={require('../../../assets/ImageUserExample.png')}
       />
+      <Text style={{ color: '#fff', fontSize: 18 }}>{loggedUser.name}</Text>
+      {loggedUser.nivel === 999 ? (
+        <Text style={styles.descricaoUser}>administrador</Text>
+      ) : (
+        <Text style={styles.descricaoUser}>usuário comum</Text>
+      )}
     </View>
   )
 }
@@ -15,17 +43,33 @@ export default function Header() {
 const styles = StyleSheet.create({
   header: {
     flex: 1,
-    marginTop: 10,
-    backgroundColor: '#ffff',
-    maxHeight: 130,
+    paddingTop: 15,
+    maxHeight: 135,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    minWidth: '100%',
+    backgroundColor: '#151515',
+  },
+  buttonBack: {
+    position: 'absolute',
+    left: 1,
+    top: 1,
+    marginLeft: 10,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   imageUser: {
-    width: 110,
-    height: 110,
+    width: 80,
+    height: 80,
     borderRadius: 100,
     borderWidth: 4,
     borderColor: '#131313',
+  },
+  descricaoUser: {
+    fontSize: 15,
+    color: '#808080',
+    marginBottom: 10,
   },
 })

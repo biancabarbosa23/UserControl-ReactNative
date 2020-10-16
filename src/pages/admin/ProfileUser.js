@@ -33,16 +33,13 @@ export default function Profile({ navigation }) {
   }, [])
 
   async function handleLoadUser() {
-    const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
+    const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:selectedUser'))
 
-    if (user.length > 0) {
-      setIdUser(user[0].id)
-      setName(user[0].name)
-      setCpf(user[0].cpf)
-      setEmail(user[0].email)
-      setPassword(user[0].password)
-      setNivel(user[0].nivel)
-    }
+    setIdUser(user.id)
+    setName(user.name)
+    setCpf(user.cpf)
+    setEmail(user.email)
+    setPassword(user.password)
   }
 
   async function handleUserUpdate() {
@@ -68,7 +65,10 @@ export default function Profile({ navigation }) {
 
       const { updatedUser } = response.data
 
-      await AsyncStorage.setItem('@CodeApi:user', JSON.stringify(updatedUser))
+      await AsyncStorage.setItem(
+        '@CodeApi:selectedUser',
+        JSON.stringify(updatedUser)
+      )
 
       Alert.alert('Alterado com sucesso!')
       setEdit(false)
@@ -76,11 +76,6 @@ export default function Profile({ navigation }) {
     } catch (response) {
       Alert.alert(response.data.message)
     }
-  }
-
-  function handleNavigation() {
-    if (nivel === 1) navigation.navigate('DashboardUser')
-    else navigation.navigate('DashboardAdm')
   }
 
   async function handleUpdatePhoto() {}
@@ -169,7 +164,10 @@ export default function Profile({ navigation }) {
         ) : (
           false
         )}
-        <TouchableOpacity style={styles.btnVoltar} onPress={handleNavigation}>
+        <TouchableOpacity
+          style={styles.btnVoltar}
+          onPress={() => navigation.navigate('UserList')}
+        >
           <Text style={styles.btnText}>Voltar</Text>
         </TouchableOpacity>
       </View>
