@@ -15,6 +15,7 @@ import api from '../../services/api'
 function ListItem({ data, navigation }) {
   const [level, setLevel] = useState(data.nivel)
   const [idUser, setIdUser] = useState(data.id)
+  const [avatar, setAvatar] = useState(data.image)
 
   async function handleDeactivation() {
     try {
@@ -27,7 +28,7 @@ function ListItem({ data, navigation }) {
               nivel: 0,
             })
 
-            setLevel(response.data.updatedUser[0].nivel)
+            setLevel(response.data.updatedUser.nivel)
           },
         },
       ])
@@ -41,7 +42,7 @@ function ListItem({ data, navigation }) {
       const response = await api.put(`/user/${idUser}`, {
         nivel: 1,
       })
-      setLevel(response.data.updatedUser[0].nivel)
+      setLevel(response.data.updatedUser.nivel)
     } catch (err) {
       Alert.alert('Não é possível ativar esse usuário')
     }
@@ -81,10 +82,19 @@ function ListItem({ data, navigation }) {
         onPress={handleNavigationUpdate}
       >
         <View style={styles.divImage}>
-          <Image
-            style={styles.imageUser}
-            source={require('../../../assets/ImageUserExample.png')}
-          />
+          {avatar === '' ? (
+            <Image
+              style={styles.imageUser}
+              source={require('../../../assets/ImageUserExample.png')}
+            />
+          ) : (
+            <Image
+              style={styles.imageUser}
+              source={{
+                uri: `http://192.168.0.97:3030/uploads/avatar/${avatar}`,
+              }}
+            />
+          )}
         </View>
         <View style={styles.divInfo}>
           <Text style={styles.text}>Nome: {data.name}</Text>

@@ -22,7 +22,7 @@ export default function Dashboard({ navigation }) {
     const token = await AsyncStorage.getItem('@CodeApi:token')
     const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
     if (!token) navigation.navigate('Login')
-    if (user) setLoggedUser(user[0])
+    if (user) setLoggedUser(user)
   }
 
   async function logOut() {

@@ -21,7 +21,7 @@ function UsersList({ navigation }) {
 
   useEffect(() => {
     handleDataUserList()
-  })
+  }, [])
 
   async function handleDataUserList() {
     try {
@@ -54,7 +54,7 @@ function UsersList({ navigation }) {
       <View style={styles.divList}>
         <FlatList
           data={users}
-          keyExtractor={(item) => item._id}
+          key={(item) => item._id}
           renderItem={({ item }) => (
             <ListItems data={item} navigation={navigation} />
           )}

@@ -23,8 +23,8 @@ export default function Profile({ navigation }) {
   const [cpf, setCpf] = useState(null)
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
+  const [avatar, setAvatar] = useState({})
   const [cpfField, setCpfField] = useState(false)
-  const [nivel, setNivel] = useState(null)
   const [edit, setEdit] = useState(false)
   const [show, setShow] = useState(false)
 
@@ -40,6 +40,10 @@ export default function Profile({ navigation }) {
     setCpf(user.cpf)
     setEmail(user.email)
     setPassword(user.password)
+    if (user.image === '') return
+    setAvatar({
+      uri: `http://192.168.0.97:3030/uploads/avatar/${user.image}`,
+    })
   }
 
   async function handleUserUpdate() {
@@ -91,10 +95,14 @@ export default function Profile({ navigation }) {
               edit === true ? handleUpdatePhoto() : {}
             }}
           >
-            <Image
-              style={styles.imageUser}
-              source={require('../../../assets/ImageUserExample.png')}
-            />
+            {avatar === '' ? (
+              <Image
+                style={styles.imageUser}
+                source={require('../../../assets/ImageUserExample.png')}
+              />
+            ) : (
+              <Image style={styles.imageUser} source={{ uri: avatar.uri }} />
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity

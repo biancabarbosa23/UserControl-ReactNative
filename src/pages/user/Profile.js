@@ -39,14 +39,13 @@ export default function Profile({ navigation }) {
   async function handleLoadUser() {
     const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
 
-    if (user.length > 0) {
-      setIdUser(user[0].id)
-      setName(user[0].name)
-      setCpf(user[0].cpf)
-      setEmail(user[0].email)
-      setPassword(user[0].password)
-      setNivel(user[0].nivel)
-    }
+    setIdUser(user.id)
+    setName(user.name)
+    setCpf(user.cpf)
+    setEmail(user.email)
+    setNivel(user.nivel)
+    if (user.image === '') return
+    setAvatar({ uri: `http://192.168.0.97:3030/uploads/avatar/${user.image}` })
   }
 
   async function handleUserUpdate() {
@@ -56,31 +55,25 @@ export default function Profile({ navigation }) {
       const data = new FormData()
 
       const path = avatar.uri.split('/')
-      const name = path[path.length - 1]
+      const nameImage = path[path.length - 1]
 
       data.append('avatar', {
-        name,
+        name: nameImage,
         uri: avatar.uri,
         type: avatar.type,
       })
 
+      data.append('name', name)
+      data.append('email', email)
+      data.append('cpf', cpf)
+
       let response
 
       if (password === null) {
-        response = await api.put(`/user/${idUser}`, {
-          name,
-          cpf: cpfField.getRawValue(),
-          email,
-          image: data,
-        })
+        response = await api.put(`/user/${idUser}`, data)
       } else {
-        response = await api.put(`/user/${idUser}`, {
-          name,
-          cpf: cpfField.getRawValue(),
-          email,
-          image: data,
-          password,
-        })
+        data.append('password', password)
+        response = await api.put(`/user/${idUser}`, data)
       }
 
       const { updatedUser } = response.data
@@ -90,6 +83,8 @@ export default function Profile({ navigation }) {
       Alert.alert('Alterado com sucesso!')
       setEdit(false)
       setShow(false)
+
+      return
     } catch (response) {
       Alert.alert(response.data.message)
     }

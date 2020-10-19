@@ -54,9 +54,9 @@ export default function Login({ navigation }) {
   async function handleNavigation() {
     const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
 
-    if (user[0].nivel === 1) navigation.navigate('DashboardUser')
+    if (user.nivel === 1) navigation.navigate('DashboardUser')
 
-    if (user[0].nivel === 999) navigation.navigate('DashboardAdm')
+    if (user.nivel === 999) navigation.navigate('DashboardAdm')
 
     return
   }

@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 
 export default function Header() {
-  const [loggedUser, setLoggedUser] = useState([])
+  const [loggedUser, setLoggedUser] = useState({})
 
   useEffect(() => {
     handleDataUser()
@@ -18,7 +18,7 @@ export default function Header() {
   async function handleDataUser() {
     try {
       const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:user'))
-      setLoggedUser(user[0])
+      setLoggedUser(user)
     } catch (response) {
       Alert.alert(response.data.message)
     }
@@ -26,10 +26,19 @@ export default function Header() {
 
   return (
     <View style={styles.header}>
-      <Image
-        style={styles.imageUser}
-        source={require('../../../assets/ImageUserExample.png')}
-      />
+      {loggedUser.image === '' ? (
+        <Image
+          style={styles.imageUser}
+          source={require('../../../assets/ImageUserExample.png')}
+        />
+      ) : (
+        <Image
+          style={styles.imageUser}
+          source={{
+            uri: `http://192.168.0.97:3030/uploads/avatar/${loggedUser.image}`,
+          }}
+        />
+      )}
       <Text style={{ color: '#fff', fontSize: 18 }}>{loggedUser.name}</Text>
       {loggedUser.nivel === 999 ? (
         <Text style={styles.descricaoUser}>administrador</Text>
