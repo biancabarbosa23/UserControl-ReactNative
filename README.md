@@ -45,7 +45,7 @@ $ expo start
 
 ## Bugs a corrigir
 
--´[BUG] Visualização da imagem do usuário na listagem
+- [BUG] Visualização da imagem do usuário na listagem
 
 ## Autores
 
